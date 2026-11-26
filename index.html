@@ -8,7 +8,7 @@ html = r'''<!DOCTYPE html>
 *{box-sizing:border-box;cursor:auto!important}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Segoe UI",Arial,sans-serif;color:#fff;user-select:none}
 :root{--bar:rgba(24,24,24,.96);--blue:#0078d7}
-#login{position:fixed;inset:0;z-index:200;background:linear-gradient(135deg,#071d42,#0878bd 55%,#03142d);display:flex;align-items:center;justify-content:center;text-align:center}
+#login{display:none!important}
 .login-card{width:min(390px,90vw);padding:36px 28px;background:#071a32b8;backdrop-filter:blur(12px);border:1px solid #ffffff30;box-shadow:0 15px 55px #0008}
 .login-logo{width:76px;height:76px;margin:0 auto 18px}
 .login-card h1{font-size:24px;font-weight:400;margin:0 0 7px}
@@ -61,8 +61,8 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Segoe UI"
  <div class="login-card">
   <div class="login-logo" id="loginLogo"></div>
   <h1>Bienvenido</h1><p>WIINDOWS 10 SIMULATOR</p>
-  <input id="password" type="password" placeholder="Escribí cualquier contraseña" autocomplete="off">
-  <button id="enter">Iniciar sesión</button><div id="loginNote">Cualquier contraseña es válida.</div>
+  <input id="password" type="password" placeholder="Pon tu contraseña" autocomplete="off">
+  <button id="enter">Iniciar sesión</button><div id="loginNote">Pon tu contraseña para continuar.</div>
  </div>
 </div>
 <div id="desktop"><div id="desktopIcons"></div></div>
@@ -146,7 +146,7 @@ $("startButton").onclick=e=>{e.stopPropagation();closeContext();$("startMenu").c
 document.addEventListener("click",e=>{if(!e.target.closest("#contextMenu"))closeContext();if(!e.target.closest("#startMenu")&&!e.target.closest("#startButton"))$("startMenu").classList.remove("open")});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeContext();closeModal();$("startMenu").classList.remove("open");$("recycleWindow").classList.remove("show");$("blackScreen").classList.remove("show")}if(e.key==="Enter"&&$("login").style.display!=="none")login()});
 function updateClock(){const d=new Date();$("clock").innerHTML=d.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"})+"<br>"+d.toLocaleDateString("es-AR")}
-function login(){$("login").style.display="none";$("password").value=""}
+function login(){const password=$("password").value.trim();if(!password){$("loginNote").textContent="Pon tu contraseña para continuar.";$("password").focus();return}$("login").style.display="none";$("password").value=""}
 $("enter").onclick=login;
 renderApps();updateClock();setInterval(updateClock,1000);
 </script>
