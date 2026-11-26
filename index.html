@@ -1,0 +1,254 @@
+html = r'''<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WIINDOWS10SIMULATOR</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:"Segoe UI",Arial,sans-serif;color:#fff;user-select:none}
+:root{--bar:rgba(24,24,24,.96);--blue:#0078d7}
+#desktop{position:fixed;inset:0 0 48px;background:#0877bd url("ICONOS%20DE%20WINDOWS/fondo.png") center/cover no-repeat;overflow:hidden}
+#desktopIcons{position:absolute;inset:0}
+.dicon{position:absolute;width:86px;min-height:88px;padding:5px 3px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;border:1px solid transparent;border-radius:3px;text-shadow:1px 1px 2px #000;cursor:default}
+.dicon:hover,.dicon.selected{background:#ffffff28;border-color:#ffffff55}
+.dicon img{width:43px;height:43px;object-fit:contain;filter:drop-shadow(1px 1px 2px #333);pointer-events:none}
+.dicon span{font-size:12px;line-height:15px;overflow-wrap:anywhere;max-width:82px;pointer-events:none}
+#taskbar{position:fixed;bottom:0;left:0;right:0;height:48px;background:var(--bar);display:flex;align-items:center;z-index:20;box-shadow:0 -1px 5px #0005}
+.taskbtn{height:48px;min-width:48px;padding:0 13px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:0;background:transparent;color:#fff}
+.taskbtn:hover{background:#ffffff20}.taskbtn img{width:23px;height:23px;object-fit:contain}
+#startButton{width:48px;padding:0}#startButton img{width:24px;height:24px}
+#searchBox{height:36px;width:230px;background:#fff;color:#333;display:flex;align-items:center;gap:9px;padding:0 10px;margin-left:1px;font-size:13px}
+#searchBox img{width:17px;height:17px;object-fit:contain}
+#taskApps{flex:1;height:100%;display:flex;overflow:hidden}
+.task-app{height:48px;min-width:48px;padding:0 12px;border:0;background:transparent;color:white;cursor:pointer}.task-app img{width:24px;height:24px;object-fit:contain}
+#tray{height:100%;display:flex;align-items:center;padding:0 12px;gap:12px;font-size:12px}#clock{text-align:center;line-height:16px;min-width:65px}
+#startMenu{position:fixed;bottom:48px;left:0;width:330px;height:480px;max-height:75vh;background:#191919f7;z-index:30;display:none;box-shadow:0 0 18px #0008}#startMenu.open{display:flex}
+#startRail{width:48px;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:8px}#startRail button{height:45px;background:transparent;color:white;border:0;cursor:pointer;font-size:19px}
+#startContent{padding:18px 12px;overflow:auto;flex:1}#startContent h3{font-size:13px;font-weight:400;margin:0 0 12px;color:#ddd}
+.start-app{display:flex;align-items:center;gap:12px;padding:8px;cursor:pointer;font-size:13px}.start-app:hover{background:#ffffff20}.start-app img{width:28px;height:28px;object-fit:contain}
+#contextMenu{position:fixed;z-index:50;display:none;min-width:230px;background:#f5f5f5;color:#222;box-shadow:0 4px 18px #0007;border:1px solid #bbb;padding:4px 0;font-size:13px}
+.ctx{display:flex;align-items:center;gap:10px;padding:8px 13px;cursor:pointer;min-height:34px}.ctx:hover{background:#dceeff}.ctx img{width:23px;height:23px;object-fit:contain}.sep{height:1px;background:#ddd;margin:4px 0}
+#modalLayer{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:#0009}#modalLayer.show{display:flex}
+.dialog{width:min(440px,92vw);background:#f4f4f4;color:#222;box-shadow:0 12px 40px #0008;padding:25px 28px;text-align:center}
+.dialogLogo{width:54px;height:54px;object-fit:contain;margin-bottom:12px}.dialog h2{font-size:21px;font-weight:400;margin:4px 0 12px}.dialog p{font-size:14px;line-height:1.5}
+.buttons{display:flex;justify-content:center;gap:12px;margin-top:24px}.dialog button{min-width:95px;padding:9px 18px;border:1px solid #aaa;background:#fff;cursor:pointer;font-size:14px}.dialog button.primary{background:#0078d7;color:#fff;border-color:#0078d7}
+.progressTrack{height:8px;background:#ddd;margin:24px 0 10px;overflow:hidden}#progressFill{height:100%;width:0;background:#0078d7;transition:width .15s}
+#blackScreen{position:fixed;inset:0;background:#000;z-index:100;display:none}#blackScreen.show{display:block}
+#recycleWindow{position:fixed;z-index:40;left:22%;top:14%;width:min(620px,75vw);height:min(420px,70vh);background:#f4f4f4;color:#222;box-shadow:0 8px 30px #0007;display:none;flex-direction:column;border:1px solid #777}#recycleWindow.show{display:flex}
+.windowTitle{height:36px;background:#fff;display:flex;align-items:center;padding:0 10px;gap:8px;font-size:13px}.windowTitle img{width:19px;height:19px;object-fit:contain}.windowTitle strong{font-weight:400;flex:1}.windowTitle button{border:0;background:transparent;width:35px;height:30px;cursor:pointer;font-size:16px}.windowTitle button:hover{background:#e55;color:#fff}
+.toolbar{padding:10px;background:#fafafa;border-bottom:1px solid #ddd;display:flex;gap:8px}.toolbar button{border:1px solid #ccc;background:#fff;padding:6px 10px;cursor:pointer}
+#recycleItems{padding:14px;overflow:auto;display:flex;gap:12px;flex-wrap:wrap;align-content:flex-start;flex:1}.recycle-item{width:90px;text-align:center;padding:8px;cursor:pointer;font-size:12px;overflow-wrap:anywhere}.recycle-item:hover,.recycle-item.selected{background:#d9ecff;outline:1px solid #8abbe8}.recycle-item img{display:block;width:40px;height:40px;object-fit:contain;margin:0 auto 6px}#recycleStatus{padding:7px 12px;border-top:1px solid #ddd;font-size:12px}
+#toast{position:fixed;right:18px;bottom:62px;background:#222;color:#fff;padding:11px 16px;font-size:13px;z-index:120;display:none;box-shadow:0 3px 12px #0006}#toast.show{display:block}
+#hint{position:fixed;right:12px;top:10px;background:#0007;padding:7px 10px;border-radius:3px;font-size:11px;opacity:.9;pointer-events:none}
+.drag-ghost{z-index:90!important;opacity:.82;pointer-events:none!important}
+@media(max-width:600px){#searchBox{width:42px}#searchBox span{display:none}#startMenu{width:min(330px,90vw)}#recycleWindow{left:4%;top:10%;width:92%;height:78%}#hint{display:none}}
+</style>
+</head>
+<body>
+<div id="desktop">
+  <div id="desktopIcons">
+    <div class="dicon" id="recycleIcon" data-kind="recycle" style="left:8px;top:8px">
+      <img id="recycleIconImg" src="ICONOS%20DE%20WINDOWS/papelera_vacia.png" alt=""><span>Papelera de reciclaje</span>
+    </div>
+  </div>
+  <div id="hint">IZQUIERDO: instalar · DERECHO x2: abrir · MANTENER DERECHO: arrastrar a papelera</div>
+</div>
+<div id="taskbar">
+  <button class="taskbtn" id="startButton" title="Inicio"><img src="ICONOS%20DE%20WINDOWS/inicio.png" alt="Inicio"></button>
+  <div id="searchBox"><img src="ICONOS%20DE%20WINDOWS/buscar.png" alt=""><span>Escribe aquí para buscar</span></div>
+  <button class="taskbtn" title="Vista de tareas"><img src="ICONOS%20DE%20WINDOWS/vista_tareas.png" alt=""></button>
+  <div id="taskApps"></div><div id="tray"><span>⌃</span><span>◖</span><div id="clock"></div></div>
+</div>
+<div id="startMenu"><div id="startRail"><button>☰</button><button>♙</button><button id="settingsButton">⚙</button><button>⏻</button></div><div id="startContent"><h3>APLICACIONES</h3><div id="startAppList"></div></div></div>
+<div id="contextMenu"></div>
+<div id="modalLayer"><div class="dialog" id="dialogContent"></div></div>
+<div id="blackScreen"></div>
+<div id="recycleWindow">
+ <div class="windowTitle"><img src="ICONOS%20DE%20WINDOWS/papelera_llena.png" alt=""><strong>Papelera de reciclaje</strong><button id="closeRecycle">×</button></div>
+ <div class="toolbar"><button id="restoreButton">Restaurar elemento</button><button id="emptyButton">Vaciar papelera</button></div>
+ <div id="recycleItems"></div><div id="recycleStatus">0 elementos</div>
+</div>
+<div id="toast"></div>
+<script>
+/*
+ * DETECCIÓN AUTOMÁTICA:
+ * En GitHub Pages se obtiene el usuario y el repositorio desde la URL actual,
+ * y se consulta la API pública de GitHub para listar ICONOS DE APPS.
+ * No hay que editar una lista al añadir PNG nuevos.
+ */
+const STORAGE_KEY="wiindows10simulator_v2";
+const WIN="ICONOS%20DE%20WINDOWS/";
+const APP_FOLDER="ICONOS DE APPS";
+const desktop=document.getElementById("desktop");
+const desktopIcons=document.getElementById("desktopIcons");
+const contextMenu=document.getElementById("contextMenu");
+const modalLayer=document.getElementById("modalLayer");
+const dialogContent=document.getElementById("dialogContent");
+const startMenu=document.getElementById("startMenu");
+const recycleWindow=document.getElementById("recycleWindow");
+const blackScreen=document.getElementById("blackScreen");
+let appFiles=[];
+let state=loadState();
+let selectedRecycle=null, installTimer=null, rightTap={time:0,file:null}, drag=null;
+
+function loadState(){
+ try{const s=JSON.parse(localStorage.getItem(STORAGE_KEY));if(s&&Array.isArray(s.installed)&&Array.isArray(s.deleted))return s;}catch(e){}
+ return {installed:[],deleted:[],positions:{}};
+}
+function saveState(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){toast("No se pudo guardar en este navegador.");}}
+function nameOf(f){return f.replace(/\.png$/i,"");}
+function appUrl(f){return APP_FOLDER.split(" ").map(encodeURIComponent).join("%20")+"/"+encodeURIComponent(f);}
+function winUrl(f){return WIN+f.split("/").map(encodeURIComponent).join("/");}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("show"),2500);}
+function closeContext(){contextMenu.style.display="none";}
+function closeModal(){modalLayer.classList.remove("show");clearInterval(installTimer);}
+function openModal(html){dialogContent.innerHTML=html;modalLayer.classList.add("show");}
+function repoInfo(){
+ const host=location.hostname;
+ const parts=location.pathname.split("/").filter(Boolean);
+ let owner="",repo="";
+ if(host.endsWith("github.io")){owner=host.split(".")[0];repo=parts[0]||owner+".github.io";}
+ else {owner="lucasameri2508-byte";repo="WIINDOWS10SIMULATOR";}
+ return {owner,repo};
+}
+async function detectApps(){
+ const {owner,repo}=repoInfo();
+ const api=`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${encodeURIComponent(APP_FOLDER)}`;
+ try{
+  const res=await fetch(api,{headers:{Accept:"application/vnd.github+json"}});
+  if(!res.ok)throw new Error("GitHub API "+res.status);
+  const data=await res.json();
+  appFiles=data.filter(x=>x.type==="file"&&/\.png$/i.test(x.name)).map(x=>x.name).sort((a,b)=>a.localeCompare(b,"es"));
+  renderApps();
+  toast(appFiles.length+" iconos PNG detectados.");
+ }catch(err){
+  appFiles=[];
+  renderApps();
+  toast("No pude leer ICONOS DE APPS. Comprobá que el repositorio sea público y que la carpeta exista.");
+ }
+}
+function appPosition(file,index){
+ const saved=state.positions[file];
+ if(saved&&Number.isFinite(saved.x)&&Number.isFinite(saved.y))return saved;
+ const col=Math.floor(index/7),row=index%7;
+ return {x:8+col*96,y:8+row*98};
+}
+function makeIcon(file,index){
+ const el=document.createElement("div");el.className="dicon app-icon";el.dataset.file=file;
+ const p=appPosition(file,index);el.style.left=p.x+"px";el.style.top=p.y+"px";
+ el.innerHTML=`<img src="${appUrl(file)}" alt=""><span>${esc(nameOf(file))}</span>`;
+ el.addEventListener("click",e=>{e.stopPropagation();selectIcon(el);});
+ el.addEventListener("contextmenu",e=>e.preventDefault());
+ el.addEventListener("pointerdown",e=>onAppPointerDown(e,el,file));
+ return el;
+}
+function renderApps(){
+ desktopIcons.querySelectorAll(".app-icon").forEach(x=>x.remove());
+ const installed=state.installed.filter(f=>appFiles.includes(f));
+ state.installed=installed;
+ installed.forEach((f,i)=>desktopIcons.appendChild(makeIcon(f,i)));
+ renderStartApps();updateRecycleIcon();saveState();
+}
+function selectIcon(el){document.querySelectorAll(".dicon.selected").forEach(x=>x.classList.remove("selected"));el.classList.add("selected");}
+function renderStartApps(){
+ const list=document.getElementById("startAppList");list.innerHTML="";
+ if(!state.installed.length){list.innerHTML='<div style="font-size:12px;color:#bbb;padding:8px">Todavía no hay aplicaciones instaladas.</div>';return;}
+ state.installed.forEach(f=>{const row=document.createElement("div");row.className="start-app";row.innerHTML=`<img src="${appUrl(f)}"><span>${esc(nameOf(f))}</span>`;row.onclick=()=>{startMenu.classList.remove("open");launchApp(f);};list.appendChild(row);});
+}
+function updateRecycleIcon(){document.getElementById("recycleIconImg").src=winUrl(state.deleted.length?"papelera_llena.png":"papelera_vacia.png");renderRecycle();}
+function showInstallMenu(){
+ const available=appFiles.filter(f=>!state.installed.includes(f));
+ let html='<div style="font-weight:600;padding:9px 13px">INSTALAR</div><div class="sep"></div>';
+ if(!available.length)html+='<div style="padding:12px;color:#777">No hay aplicaciones nuevas.</div>';
+ available.forEach(f=>html+=`<div class="ctx install-choice" data-file="${esc(f)}"><img src="${appUrl(f)}"><span>${esc(nameOf(f))}</span></div>`);
+ openModal(`<div style="text-align:left">${html}<div style="text-align:right;margin-top:12px"><button id="closeInstall">Cerrar</button></div></div>`);
+ document.getElementById("closeInstall").onclick=closeModal;
+ dialogContent.querySelectorAll(".install-choice").forEach(row=>row.onclick=()=>confirmInstall(row.dataset.file));
+}
+function confirmInstall(f){
+ openModal(`<img class="dialogLogo" src="${appUrl(f)}"><h2>¿Deseas descargar ${esc(nameOf(f))} en tu PC?</h2><p>Se agregará un icono al escritorio de Windows Simulator.</p><div class="buttons"><button class="primary" id="yesInstall">Sí</button><button id="noInstall">No</button></div>`);
+ document.getElementById("yesInstall").onclick=()=>startInstall(f);document.getElementById("noInstall").onclick=closeModal;
+}
+function startInstall(f){
+ let n=0;openModal(`<img class="dialogLogo" src="${appUrl(f)}"><h2>Descargando ${esc(nameOf(f))}...</h2><p id="progressText">Preparando instalación...</p><div class="progressTrack"><div id="progressFill"></div></div>`);
+ installTimer=setInterval(()=>{n=Math.min(100,n+Math.floor(Math.random()*10)+5);document.getElementById("progressFill").style.width=n+"%";document.getElementById("progressText").textContent=n+"%";if(n>=100){clearInterval(installTimer);if(!state.installed.includes(f))state.installed.push(f);state.deleted=state.deleted.filter(x=>x!==f);saveState();renderApps();setTimeout(()=>{closeModal();toast(nameOf(f)+" se instaló.");},350);}},180);
+}
+function launchApp(){closeContext();startMenu.classList.remove("open");recycleWindow.classList.remove("show");blackScreen.classList.add("show");}
+function uninstallToBin(f){
+ state.installed=state.installed.filter(x=>x!==f);
+ if(!state.deleted.includes(f))state.deleted.push(f);
+ delete state.positions[f];saveState();renderApps();toast(nameOf(f)+" se movió a la Papelera.");
+}
+function placeContext(x,y){const r=contextMenu.getBoundingClientRect();contextMenu.style.left=Math.max(0,Math.min(x,innerWidth-r.width-4))+"px";contextMenu.style.top=Math.max(0,Math.min(y,innerHeight-r.height-4))+"px";}
+function openContext(html,x,y){contextMenu.innerHTML=html;contextMenu.style.display="block";placeContext(x,y);}
+function onAppPointerDown(e,el,file){
+ if(e.button!==2)return;
+ e.preventDefault();e.stopPropagation();
+ const startX=e.clientX,startY=e.clientY,rect=el.getBoundingClientRect();
+ drag={file,el,startX,startY,lastX:startX,lastY:startY,moved:false,origLeft:parseFloat(el.style.left)||0,origTop:parseFloat(el.style.top)||0};
+ try{el.setPointerCapture(e.pointerId);}catch(_){}
+}
+document.addEventListener("pointermove",e=>{
+ if(!drag)return;
+ const dx=e.clientX-drag.startX,dy=e.clientY-drag.startY;
+ if(Math.hypot(dx,dy)>7)drag.moved=true;
+ if(drag.moved){
+  drag.el.style.left=Math.max(0,drag.origLeft+dx)+"px";
+  drag.el.style.top=Math.max(0,drag.origTop+dy)+"px";
+  drag.lastX=e.clientX;drag.lastY=e.clientY;
+ }
+});
+document.addEventListener("pointerup",e=>{
+ if(!drag||e.button!==2)return;
+ const d=drag;drag=null;
+ if(d.moved){
+  const bin=document.getElementById("recycleIcon").getBoundingClientRect();
+  const inside=e.clientX>=bin.left&&e.clientX<=bin.right&&e.clientY>=bin.top&&e.clientY<=bin.bottom;
+  if(inside){uninstallToBin(d.file);}
+  else{
+   const x=parseFloat(d.el.style.left)||d.origLeft,y=parseFloat(d.el.style.top)||d.origTop;
+   state.positions[d.file]={x,y};saveState();
+  }
+ }else{
+  const now=Date.now();
+  if(rightTap.file===d.file&&now-rightTap.time<550){rightTap={time:0,file:null};launchApp(d.file);}
+  else rightTap={time:now,file:d.file};
+ }
+});
+desktop.addEventListener("contextmenu",e=>e.preventDefault());
+desktop.addEventListener("click",e=>{
+ if(e.target.closest(".dicon"))return;
+ if(e.target!==desktop&&e.target!==desktopIcons)return;
+ document.querySelectorAll(".dicon.selected").forEach(x=>x.classList.remove("selected"));
+ openContext('<div class="ctx" id="installMenu"><b>＋</b><strong>INSTALAR</strong></div><div class="sep"></div><div class="ctx" id="refreshMenu">↻　Actualizar</div><div class="ctx" id="recycleMenu">♻　Abrir Papelera de reciclaje</div>',e.clientX,e.clientY);
+ document.getElementById("installMenu").onclick=()=>{closeContext();showInstallMenu();};
+ document.getElementById("refreshMenu").onclick=()=>{closeContext();detectApps();};
+ document.getElementById("recycleMenu").onclick=openRecycle;
+});
+const recycleIcon=document.getElementById("recycleIcon");
+recycleIcon.addEventListener("dblclick",openRecycle);
+recycleIcon.addEventListener("click",e=>{e.stopPropagation();selectIcon(recycleIcon);});
+recycleIcon.addEventListener("contextmenu",e=>{e.preventDefault();e.stopPropagation();openContext('<div class="ctx" id="openBin">♻　Abrir</div><div class="ctx" id="emptyBin">▣　Vaciar papelera</div>',e.clientX,e.clientY);document.getElementById("openBin").onclick=openRecycle;document.getElementById("emptyBin").onclick=()=>{closeContext();emptyRecycle();};});
+function openRecycle(){closeContext();startMenu.classList.remove("open");recycleWindow.classList.add("show");renderRecycle();}
+function renderRecycle(){
+ const area=document.getElementById("recycleItems");if(!area)return;area.innerHTML="";selectedRecycle=null;
+ state.deleted.forEach(f=>{const el=document.createElement("div");el.className="recycle-item";el.innerHTML=`<img src="${appUrl(f)}"><span>${esc(nameOf(f))}</span>`;el.onclick=()=>{area.querySelectorAll(".selected").forEach(x=>x.classList.remove("selected"));el.classList.add("selected");selectedRecycle=f;};el.ondblclick=()=>restoreFile(f);area.appendChild(el);});
+ document.getElementById("recycleStatus").textContent=state.deleted.length+" elemento(s)";
+ document.getElementById("restoreButton").disabled=!state.deleted.length;document.getElementById("emptyButton").disabled=!state.deleted.length;
+}
+function restoreFile(f){state.deleted=state.deleted.filter(x=>x!==f);if(!state.installed.includes(f))state.installed.push(f);saveState();renderApps();toast(nameOf(f)+" restaurado.");}
+function emptyRecycle(){if(!state.deleted.length)return;if(!confirm("¿Eliminar definitivamente todos los elementos de la Papelera?"))return;state.deleted=[];saveState();updateRecycleIcon();toast("Papelera vaciada.");}
+document.getElementById("startButton").onclick=e=>{e.stopPropagation();closeContext();startMenu.classList.toggle("open");};
+document.getElementById("settingsButton").onclick=()=>toast("Configuración: próximamente.");
+document.getElementById("closeRecycle").onclick=()=>recycleWindow.classList.remove("show");
+document.getElementById("restoreButton").onclick=()=>selectedRecycle?restoreFile(selectedRecycle):toast("Seleccioná un elemento.");
+document.getElementById("emptyButton").onclick=emptyRecycle;
+document.addEventListener("click",e=>{if(!e.target.closest("#contextMenu"))closeContext();if(!e.target.closest("#startMenu")&&!e.target.closest("#startButton"))startMenu.classList.remove("open");});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(blackScreen.classList.contains("show")){blackScreen.classList.remove("show");return;}closeContext();closeModal();startMenu.classList.remove("open");recycleWindow.classList.remove("show");}});
+function updateClock(){const d=new Date();document.getElementById("clock").innerHTML=d.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"})+"<br>"+d.toLocaleDateString("es-AR");}
+function setCursors(){const normal=`url("${winUrl("CURSOR/Flecha.png")}") 0 0, auto`;const pointer=`url("${winUrl("CURSOR/DedoIndice.png")}") 8 2, pointer`;document.documentElement.style.cursor=normal;const s=document.createElement("style");s.textContent=`button,.ctx,.start-app,.recycle-item{cursor:${pointer}!important}`;document.head.appendChild(s);}
+renderApps();updateClock();setInterval(updateClock,1000);setCursors();detectApps();
+</script>
+</body>
+</html>
