@@ -132,6 +132,8 @@ const svg=(kind)=> {
  };
  return `<svg ${common}>${art[kind]||art.note}</svg>`;
 };
+const WINDOWS_ICONS_DIR="ICONOS DE WINDOWS";const windowsIconFiles={cmd:"CMD.png",calculator:"Calculadora.png",settings:"Configuracion.png",account:"Cuenta.png",excel:"Excel.png",explorer:"Explorador de archivos.png",chrome:"Google Chrome.png",edge:"Microsoft Edge.png",store:"Microsoft Store.png",paint:"Paint.png",binFull:"Papelera llena.png",binEmpty:"Papelera vacia.png",powerpoint:"PowerPoint.png",clock:"Reloj.png",whatsapp:"WhatsApp.png",word:"Word.png",notepad:"bloq de notas.png"};
+function windowsIcon(id,fallback){const file=windowsIconFiles[id];return file?`<img class="app-img windows-png-icon" src="${esc(WINDOWS_ICONS_DIR+"/"+file)}" alt="">`:svg(fallback||id)}
 $("loginLogo").innerHTML=svg("windows");
 $("settingsButton").innerHTML=windowsIcon("settings","note");
 $("startButton").innerHTML=svg("windows");$("searchIcon").innerHTML=svg("search");$("tasksButton").innerHTML=svg("task");$("storeButton").innerHTML=svg("store");$("binTitleIcon").innerHTML=svg("bin");
@@ -173,8 +175,6 @@ function openDesktopView(){const list=state.desktops.map((d,i)=>`<button class="
 function switchDesktop(index){if(index===state.currentDesktop||!state.desktops[index])return;saveDesktopState();const reopen=state.desktops[index].openApp;if($("blackScreen").classList.contains("show")){$("blackScreen").classList.remove("show");clearInterval(appTimer);appTimer=null}currentAppId=null;state.currentDesktop=index;loadDesktopState();renderApps();renderTaskbar();saveState();toast(state.desktops[index].name);if(reopen)setTimeout(()=>launchApp(reopen),80)}
 ensureDesktops();
 function app(id){return apps.find(a=>a.id===id)||customApps.find(a=>a.id===id)}
-const WINDOWS_ICONS_DIR="ICONOS DE WINDOWS";const windowsIconFiles={cmd:"CMD.png",calculator:"Calculadora.png",settings:"Configuracion.png",account:"Cuenta.png",excel:"Excel.png",explorer:"Explorador de archivos.png",chrome:"Google Chrome.png",edge:"Microsoft Edge.png",store:"Microsoft Store.png",paint:"Paint.png",binFull:"Papelera llena.png",binEmpty:"Papelera vacia.png",powerpoint:"PowerPoint.png",clock:"Reloj.png",whatsapp:"WhatsApp.png",word:"Word.png",notepad:"bloq de notas.png"};
-function windowsIcon(id,fallback){const file=windowsIconFiles[id];return file?`<img class="app-img windows-png-icon" src="${esc(WINDOWS_ICONS_DIR+"/"+file)}" alt="">`:svg(fallback||id)}
 function appIcon(id){const a=app(id);return a?.image?`<img class="app-img" src="${esc(a.image)}" alt="">`:windowsIcon(id,a?.kind||"note")}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function toast(msg){const t=$("toast");t.textContent=msg;t.style.display="block";clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display="none",2400)}
